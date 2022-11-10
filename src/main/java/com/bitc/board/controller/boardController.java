@@ -5,6 +5,7 @@ import com.bitc.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -19,6 +20,10 @@ import java.util.List;
 // 사용자가 웹 브라우저를 통해 어떠한 요청을 할 경우 해당 요청을 처리하기 위한 비즈니스 로직을 가지고 있는
 // 어노테이션, 클래스에 해당 어노테이션을 사용하면 해당 클래스는 사용자 요청을 처리하기 위한 클래스라는것을
 // 스프링 프레임워크에 알려준다.
+// 컨트롤러가 하는 일 2가지
+// 사용자가 서버에 요청한 주소를 기반으로 사용자가 전송한 데이터를 받음
+// 사용자에게 제공할 VIEW 파일을 연동
+// 사용자가 전송한 데이터를 바탕으로 서비스에게 내부 연산을 요청
 @Controller
 public class boardController 
 {
@@ -38,12 +43,56 @@ public class boardController
         return "index"; // 탬플릿 폴더 안에 있는 리소스의 이름을 의미한다.
     }
     
-    @RequestMapping("/board/openBoardList.do")
+    // 게시물 목록
+    @RequestMapping("/board/openBoardList")
     public ModelAndView openBoardList() throws Exception {
         ModelAndView mv = new ModelAndView("board/boardList");
         List<BoardDto> dataList = boardService.selectBoardList();
         mv.addObject("dataList", dataList);
         
         return mv;
+    }
+    
+    // 게시물 상세 보기
+    // @RequestParam : jsp의 request.getParameter()와 같은 기능을 하는 어노테이션, 클라이언트에서
+    // 서버로 전송된 데이터를 가져오는 어노테이션
+    @RequestMapping("/board/openBoardDetail")
+    public ModelAndView openBoardDetail(@RequestParam int idx) throws Exception {
+        ModelAndView mv = new ModelAndView("board/boardDetail");
+        
+        BoardDto board = boardService.selectBoardDetail(idx);
+        mv.addObject("board", board);
+        
+        return mv;
+    }
+    
+    // 게시글 등록 view 페이지
+    @RequestMapping("/board/boardWrite")
+    public String boardWrite() throws Exception {
+        return "board/boardWrite";
+    }
+    
+    // 게시글 등록
+    @RequestMapping("/board/insertBoard")
+    public String insertBoard(BoardDto board) throws Exception {
+        boardService.insertBoard(board);
+        
+        return "redirect:/board/openBoardList";
+    }
+    
+    // 게시글 수정
+    @RequestMapping("/board/updateBoard")
+    public String updateBoard(BoardDto board) throws Exception {
+        boardService.updateBoard(board);
+        
+        return "redirect:/board/openBoardList";
+    }
+    
+    // 게시글 삭제
+    @RequestMapping("/board/deleteBoard")
+    public String deleteBoard(@RequestParam int idx) throws Exception {
+        boardService.deleteBoard(idx);
+        
+        return "redirect:/board/openBoardList";
     }
 }

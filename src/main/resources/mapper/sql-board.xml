@@ -32,10 +32,15 @@ xml 파일에서 인식하지 못하기 때문에 전체 패키지명을 다 입
 <!--    매개변수가 기본 타입일 경우 mapper 파일에 있는 파일의 메서드의 변수명을 그대로 사용 가능-->
 <!--    @Param 어노테이션을 사용하여 매개변수의 이름을 지정할 수 있음-->
 <!--    매개변수가 사용자 지정 타입일 경우 해당 타입의 멤버 변수명을 그대로 사용-->
+<!--    SQL 쿼리문 안에서 컬럼명이 각각 달라지는 이유 -->
+<!--    1. DB에서 사용하는 명명법과 java에서 사용하는 명명법이 다름 -->
+<!--    // 어플리케이션 프로퍼티를 통해서 카멜명명법을 사용한다고 설정-->
+<!--    // 파라미터 타입, 반환 타입에 자바 class를 사용한다고 설정했기 때문에 해당 클래스의 맴버 변수명을 사용-->
+<!--    // mapper 파일에서 param 어노테이션을 사용하여 변수명을 설정할 경우 해당 변수명을 사용해야 한다.-->
     <insert id="insertBoard" parameterType="com.bitc.board.dto.BoardDto">
         <![CDATA[
             INSERT INTO t_board (title, contents, pwd, user_id, create_dt)
-            VALUES(#{title}, #{contents}, #{pwd}, #{userId}, NOW())
+            VALUES(#{title}, #{contents}, '1234', #{userId}, NOW())
         ]]>
     </insert>
 
@@ -50,7 +55,7 @@ xml 파일에서 인식하지 못하기 때문에 전체 패키지명을 다 입
         <![CDATA[
             UPDATE t_board SET deleted_yn = 'Y'
             WHERE idx = #{idx}
-        ]]]>
+        ]]>
     </update>
 
     <update id="updateHitCount" parameterType="int">
