@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="my-4 p-3 border">
+            <p th:text="${strList}"></p>
+            <p th:text="${strMap}"></p>
+            
+            <p th:text= "'리스트의 크기 : ' + ${#lists.size(strList)}"></p>
+            <p th:text="'빈 리스트 여부 : ' + ${#lists.isEmpty(strList)}"></p>
+            <p th:text="'map의 크기 : ' + ${#maps.size(strMap)}"></p>
+            <p th:text="'빈 map의 여부 : ' + ${#maps.isEmpty(strMap)}"></p>
+        </div>
+        
+        <div class="my-3 p-3 border">
+            <!--속성 설정하기 : thymeleaf에는 일반적으로 사용되는 거의 모든 html 태그의 속성이 th: 형태로 구현되어있다.-->
+            <!--th:attr - 지정한 html 태그에 원하는 속성 및 값을 입력할 수 있는 속성-->
+            <!--타임리프에서는 th:attr 속성보다 th:html 속성 형태로 사용하는것을 추천-->
+            <a href="http://localhost:8080" th:href="@{http://www.daum.net}" th:text="'다음 홈페이지'">로컬 서버</a><br>
+            <a href="http://localhost:8080" th:attr="href=@{http://www.daum.net}" th:text="'다음 홈페이지'">로컬 서버</a><br>
+            <a href="http://localhost:8080" th:attr="href=@{http://www.naver.com}, alt='네이버', target='_blank'">네이버 홈페이지</a><br>
+            
+            <!--attr:append, attrprepend : 지정한 html 속성에 값을 추가할 경우 사용-->
+            <a href="/board/openBoardDetail?idx=" th:attrappend="href=3" th:text="'상세 글 열기'"></a>
+            <button class="btn-primary" type="button" th:attrprepend="class='btn '">클릭</button>
+        </div>
+        
+        <div class="my-4 p-3 border">
+            <input type="checkbox" class="form-check" checked>체크 있음
+            <input type="checkbox" class="form-check">체크 없음
+            <input type="checkbox" class="form-check" th:checked="true">thymeleaf로 체크 있음
+            <input type="checkbox" class="form-check" th:checked="false">thymeleaf로 체크 없음
+            <br>
+            <input type="radio" class="form-check" name="ra1" checked>선택1
+            <input type="radio" class="form-check" name="ra1">선택2
+            <input type="radio" class="form-check" name="ra1">선택3
+            <br>
+            <input type="radio" class="form-check" name="ra2">선택2-1
+            <input type="radio" class="form-check" name="ra2" th:checked="true">선택2-2
+            <input type="radio" class="form-check" name="ra2">선택2-3
+            <br>
+            <select class="form-control">
+                <option>선택1</option>
+                <option>선택2</option>
+                <option th:selected="true">선택3</option>
+            </select>
+        </div>
+    </div>
+</body>
+</html>
