@@ -24,7 +24,7 @@
         </div>
     </header>
     <main class="container">
-        <form action="/board/insertBoard" method="post">
+        <form action="/board/insertBoard" method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-sm-6 mx-auto">
                     <div class="form-floating my-3">
@@ -37,6 +37,10 @@
                     </div>
                     <div class="form-control my-3">
                         <textarea rows="5" class="form-control" id="contents" name="contents" placeholder="내용을 입력하세요"></textarea>
+                        <!--파일 업로드를 위해 추가-->
+                        <div class="my-3">
+                            <input type="file" class="form-control" id="files" name="files" placeholder="파일을 선택하세요" multiple>
+                        </div>
                         <div class="row">
                             <div class="col-sm d-grid gap-3">
                                 <button type="submit" class="btn btn-outline-primary">확인</button>
