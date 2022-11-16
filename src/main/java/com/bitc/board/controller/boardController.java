@@ -1,13 +1,21 @@
 package com.bitc.board.controller;
 
 import com.bitc.board.dto.BoardDto;
+import com.bitc.board.dto.BoardFileDto;
 import com.bitc.board.service.BoardService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
 
 // MVC 패턴
@@ -25,7 +33,7 @@ import java.util.List;
 // 사용자에게 제공할 VIEW 파일을 연동
 // 사용자가 전송한 데이터를 바탕으로 서비스에게 내부 연산을 요청
 @Controller
-public class boardController 
+public class boardController
 {
     // 사용자가 해당 타입의 객체를 생성하는 것이 아니라 스프링 프레임워크가 해당 타입의 객체를
     // 생성하고 사용자는 이용만 하도록 하는 어노테이션
@@ -73,9 +81,11 @@ public class boardController
     }
     
     // 게시글 등록
+    // 클라이언트에서 업로드된 파일 데이터를 받기 위해서 매개변수로 MiltipartHttpServletRequest를 추가함
     @RequestMapping("/board/insertBoard")
-    public String insertBoard(BoardDto board) throws Exception {
-        boardService.insertBoard(board);
+    public String insertBoard(BoardDto board, MultipartHttpServletRequest multipart) throws Exception {
+        // 업로드된 파일 데이터를 서비스 영역에서 처리하기 위해서 매개변수를 추가
+        boardService.insertBoard(board, multipart);
         
         return "redirect:/board/openBoardList";
     }
@@ -94,5 +104,23 @@ public class boardController
         boardService.deleteBoard(idx);
         
         return "redirect:/board/openBoardList";
+    }
+    
+    @RequestMapping("/board/downloadBoardFile")
+    public void downloadBoardFile(@RequestParam int idx, @RequestParam int boardIdx, HttpServletResponse response) throws Exception {
+        BoardFileDto boardFile = boardService.selectBoardFileInfo(idx, boardIdx);
+        
+        if(ObjectUtils.isEmpty(boardFile) == false) {
+            String fileName = boardFile.getOriginalFileName();
+            
+            byte[] files = FileUtils.readFileToByteArray(new File(boardFile.getStoredFilePath()));
+            response.setContentType("application/octet-stream");
+            response.setContentLength(files.length);
+            response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(fileName, "UTF-8")
+                + "\";");
+            response.getOutputStream().write(files);
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        }
     }
 }
